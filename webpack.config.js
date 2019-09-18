@@ -1,11 +1,13 @@
 const path = require("path");
 const webpackShellPlugin = require("webpack-shell-plugin");
 const nodeExternals = require("webpack-node-externals");
-const uglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const miniCssExtractPlugin = require("mini-css-extract-plugin");
+const optimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const terserPlugin = require("terser-webpack-plugin");
+const htmlWebpackPlugin = require("html-webpack-plugin");
 
 const clientConfig = {
   entry: "./src/client/index.tsx",
-  devtool: "inline-source-map",
   mode: "production",
   target: "web",
   module: {
@@ -16,21 +18,65 @@ const clientConfig = {
         exclude: /node_modules/
       },
       {
-        test: /\.css$/i,
-        use: ["css-loader"]
+        test: /\.css$/,
+        use: [miniCssExtractPlugin.loader, "css-loader"]
       }
     ]
   },
+  plugins: [
+    new htmlWebpackPlugin({
+      template: path.resolve(__dirname, "src/client/public/index.html"),
+      filename: "index.html",
+      inject: "body"
+    }),
+    new miniCssExtractPlugin({
+      filename: "css/bundle.css",
+      ignoreOrder: false // Enable to remove warnings about conflicting order
+    }),
+    new webpackShellPlugin({
+      onBuildEnd: ["npm run-script nodemon"]
+    })
+  ],
   resolve: {
     extensions: [".tsx", ".ts", ".js"]
   },
-  output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "src", "server", "public", "js")
-  },
   optimization: {
     minimize: true,
-    minimizer: [new uglifyJsPlugin()]
+    minimizer: [
+      new terserPlugin({
+        parallel: true
+      }),
+      new optimizeCssAssetsPlugin()
+    ],
+    splitChunks: {
+      chunks: "all",
+      maxInitialRequests: Infinity,
+      minSize: 0,
+      cacheGroups: {
+        reactVendor: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: "react"
+        },
+        reactRouterVendor: {
+          test: /[\\/]node_modules[\\/](react-router|react-router-dom)[\\/]/,
+          name: "reactRouter"
+        },
+        bootstrapVendor: {
+          test: /[\\/]node_modules[\\/](react-bootstrap)[\\/]/,
+          name: "bootstrap"
+        },
+        vendor: {
+          test: /[\\/]node_modules[\\/](!react-bootstrap)(!react-router)(!react-router-dom)(!react)(!react-dom)[\\/]/,
+          name: "other"
+        }
+      }
+    }
+  },
+  output: {
+    filename: "js/main.bundle.js",
+    chunkFilename: "vendor/[name].js",
+    publicPath: "/",
+    path: path.resolve(__dirname, "src/server/public")
   }
 };
 
@@ -42,13 +88,6 @@ const serverConfig = {
   node: {
     __dirname: false
   },
-  output: {
-    path: path.resolve(__dirname, "src", "server"),
-    filename: "server.bundle.js"
-  },
-  resolve: {
-    extensions: [".ts", ".js"]
-  },
   module: {
     rules: [
       {
@@ -58,11 +97,13 @@ const serverConfig = {
       }
     ]
   },
-  plugins: [
-    new webpackShellPlugin({
-      onBuildEnd: ["npm run-script nodemon"]
-    })
-  ]
+  resolve: {
+    extensions: [".ts", ".js"]
+  },
+  output: {
+    path: path.resolve(__dirname, "src/server"),
+    filename: "server.bundle.js"
+  }
 };
 
 module.exports = [clientConfig, serverConfig];
