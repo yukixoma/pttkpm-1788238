@@ -30,7 +30,7 @@ const clientConfig = {
       inject: "body"
     }),
     new miniCssExtractPlugin({
-      filename: "css/bundle.css",
+      filename: "css/main.bundle.css",
       ignoreOrder: false // Enable to remove warnings about conflicting order
     }),
     new webpackShellPlugin({
@@ -59,7 +59,7 @@ const clientConfig = {
         },
         reactRouterVendor: {
           test: /[\\/]node_modules[\\/](react-router|react-router-dom)[\\/]/,
-          name: "reactRouter"
+          name: "react-router"
         },
         bootstrapVendor: {
           test: /[\\/]node_modules[\\/](react-bootstrap)[\\/]/,
