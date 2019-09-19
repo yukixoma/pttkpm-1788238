@@ -1,18 +1,18 @@
 import express from "express";
 import { AuthorizeInfoType } from "datatypes";
-import { Get } from "../database/Database";
+import { GetOne } from "../database/Database";
 const authorizeRouter = express.Router();
 const defautlTable = "authorize";
 
 authorizeRouter.post("/login", async (req, res, next) => {
   try {
-    const data: AuthorizeInfoType[] = await Get(
+    const data: AuthorizeInfoType = await GetOne(
       defautlTable,
       Object.keys(req.body),
       Object.values(req.body)
     );
-    if (data.length == 1) {
-      res.status(200).send(data[0]);
+    if (data) {
+      res.status(200).send(data);
     } else {
       res.status(401).send("Login info invalid!");
     }

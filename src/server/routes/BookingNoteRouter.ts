@@ -1,18 +1,18 @@
 import express from "express";
 import { BookingNoteType } from "datatypes";
 import { GetDiffDays as GetStayDays } from "../../library/GetDiffDays";
-import { Get, UpdateMany, InsertToTable } from "../database/Database";
+import { GetOne, UpdateMany, InsertToTable } from "../database/Database";
 const bookingNoteRouter = express.Router();
 const defautlTable = "booking_note";
 
 bookingNoteRouter.post("/getInfo", async (req, res, next) => {
   try {
-    const data: BookingNoteType[] = await Get(
+    const data: BookingNoteType = await GetOne(
       defautlTable,
       Object.keys(req.body),
       Object.values(req.body)
     );
-    res.status(200).send(data[0]);
+    res.status(200).send(data);
   } catch (error) {
     console.log(error);
     next(error);

@@ -1,6 +1,11 @@
 import express from "express";
 import { RoomType } from "datatypes";
-import { InsertManyToTable, Get, UpdateOne } from "../database/Database";
+import {
+  InsertManyToTable,
+  GetMany,
+  GetOne,
+  UpdateOne
+} from "../database/Database";
 const roomRouter = express.Router();
 const defautlTable = "room";
 
@@ -17,7 +22,7 @@ roomRouter.post("/new", async (req, res, next) => {
 
 roomRouter.post("/getInfo", async (req, res, next) => {
   try {
-    const data: RoomType[] = await Get(
+    const data: RoomType[] = await GetMany(
       "room",
       Object.keys(req.body),
       Object.values(req.body)
@@ -33,13 +38,13 @@ roomRouter.post("/checkin", async (req, res, next) => {
   const room = req.body;
   const { section_id, floor_id, id } = room;
   try {
-    const roomInfo: RoomType[] = await Get(
+    const roomInfo: RoomType = await GetOne(
       defautlTable,
       Object.keys(room),
       Object.values(room)
     );
 
-    if (roomInfo[0].availability == 1) {
+    if (roomInfo.availability == 1) {
       await UpdateOne("room", "availability", "0", Object.keys(room), [
         section_id,
         floor_id.toString(),

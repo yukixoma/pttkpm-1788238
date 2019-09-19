@@ -8,7 +8,36 @@ async function OpenDatabase() {
   return database;
 }
 
-export async function Get(table: string, columns: string[], values: string[]) {
+export async function GetOne(
+  table: string,
+  columns: string[],
+  values: string[]
+) {
+  const database = await OpenDatabase();
+  let reserved = "";
+  for (let i = 0; i < columns.length; i++) {
+    const e = columns[i];
+    if (i < columns.length - 1) {
+      reserved += `${e} = ? AND `;
+    } else reserved += `${e} = ?`;
+  }
+
+  const data = await database.get(
+    `
+    SELECT * 
+    FROM ${table}
+    WHERE ${reserved}
+  `,
+    values
+  );
+  return data;
+}
+
+export async function GetMany(
+  table: string,
+  columns: string[],
+  values: string[]
+) {
   const database = await OpenDatabase();
   let reserved = "";
   for (let i = 0; i < columns.length; i++) {
