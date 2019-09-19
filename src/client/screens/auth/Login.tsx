@@ -88,6 +88,7 @@ const Login: React.FC<LoginProps> = ({ history, setActiveKey }) => {
               <Col>
                 <Form.Check
                   type="radio"
+                  id="manager"
                   label="Manager"
                   name="role"
                   value="manager"
@@ -95,6 +96,7 @@ const Login: React.FC<LoginProps> = ({ history, setActiveKey }) => {
                 />
                 <Form.Check
                   type="radio"
+                  id="employee"
                   label="Employee"
                   name="role"
                   value="employee"

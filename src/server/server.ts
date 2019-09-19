@@ -6,7 +6,12 @@ import bodyParser from "body-parser";
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// Config public path
 app.use(express.static(path.join(__dirname, "public")));
+
+// Serve favicon
+const favicon = require("express-favicon");
+app.use(favicon(__dirname + "/public/image/favicon.png"));
 
 // Config to let react-router navigate all get request
 app.get("/*", (req, res) => {
