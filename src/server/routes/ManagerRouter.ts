@@ -1,12 +1,12 @@
 import express from "express";
-import { BookingNoteType, YearRevenueType } from "datatypes";
+import { CheckInOutType, YearRevenueType } from "datatypes";
 import { GetAll } from "../database/Database";
 const managerRouter = express.Router();
 
 managerRouter.post("/yearRevenue", async (req, res, next) => {
   const { year } = req.body;
   try {
-    const bookingNote: BookingNoteType[] = await GetAll("booking_note");
+    const bookingNote: CheckInOutType[] = await GetAll("check_in");
     const bookingNoteByYear = bookingNote.filter(
       b => new Date(b.start_date).getFullYear() == year
     );

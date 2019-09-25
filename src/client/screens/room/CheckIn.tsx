@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { RouteComponentProps as RCP, Link } from "react-router-dom";
-import {
-  BookingNoteType,
-  RoomType,
-  RoomTypeType,
-  LocalAuthorizedInfoType
-} from "datatypes";
+import { CheckInOutType, LocalAuthorizedInfoType } from "datatypes";
+import { RoomType, RoomTypeType } from "datatypes";
 import {
   Button,
   Container,
@@ -42,12 +38,11 @@ const CheckinView: React.FC<RCP> = ({ history }) => {
     const form = new FormData(event.target as HTMLFormElement);
 
     try {
-      const bookingNote = {} as BookingNoteType;
+      const checkIn = {} as CheckInOutType;
 
-      for (const pair of form.entries()) {
-        if (pair[1] == "")
-          bookingNote[pair[0]] = JSON.stringify(form.getAll(pair[0]));
-        else bookingNote[pair[0]] = pair[1];
+      for (const [key, value] of form.entries()) {
+        if (value == "") checkIn[key] = JSON.stringify(form.getAll(key));
+        else checkIn[key] = value;
       }
 
       const start_date = new Date(form.get("start_date") as string);
@@ -69,13 +64,13 @@ const CheckinView: React.FC<RCP> = ({ history }) => {
         setAlert({ msg: roomRes.data, success: true });
 
         // Post booking note info to server
-        bookingNote.expect_end = expect_end.toDateString();
-        bookingNote.check_out = 0;
-        const bookingNoteRes = await Axios.post(
-          "/api/booking-note/checkin",
-          bookingNote
+        checkIn.expect_end = expect_end.toDateString();
+        checkIn.is_check_out = 0;
+        const checkInRes = await Axios.post(
+          "/api/check-in-out/checkin",
+          checkIn
         );
-        setAlert({ msg: bookingNoteRes.data, success: true });
+        setAlert({ msg: checkInRes.data, success: true });
       }
     } catch (error) {
       setAlert({ msg: error.response.data, success: false });

@@ -1,13 +1,13 @@
 import express from "express";
-import { BookingNoteType } from "datatypes";
+import { CheckInOutType } from "datatypes";
 import { GetDiffDays as GetStayDays } from "../../library/GetDiffDays";
 import { GetOne, UpdateMany, InsertToTable } from "../database/Database";
-const bookingNoteRouter = express.Router();
-const defautlTable = "booking_note";
+const checkInOutRouter = express.Router();
+const defautlTable = "check_in";
 
-bookingNoteRouter.post("/getInfo", async (req, res, next) => {
+checkInOutRouter.post("/getInfo", async (req, res, next) => {
   try {
-    const data: BookingNoteType = await GetOne(
+    const data: CheckInOutType = await GetOne(
       defautlTable,
       Object.keys(req.body),
       Object.values(req.body)
@@ -19,14 +19,14 @@ bookingNoteRouter.post("/getInfo", async (req, res, next) => {
   }
 });
 
-bookingNoteRouter.post("/checkin", async (req, res, next) => {
-  const bookingNote: BookingNoteType = req.body;
-  bookingNote.id = new Date().getTime().toString();
+checkInOutRouter.post("/checkin", async (req, res, next) => {
+  const checkInOut: CheckInOutType = req.body;
+  checkInOut.id = new Date().getTime().toString();
   try {
     await InsertToTable(
-      Object.keys(bookingNote),
+      Object.keys(checkInOut),
       defautlTable,
-      Object.values(bookingNote)
+      Object.values(checkInOut)
     );
     res.status(201).send("Check-in completed!");
   } catch (error) {
@@ -35,23 +35,23 @@ bookingNoteRouter.post("/checkin", async (req, res, next) => {
   }
 });
 
-bookingNoteRouter.post("/checkout", async (req, res, next) => {
-  const bookingNote: BookingNoteType = req.body;
+checkInOutRouter.post("/checkout", async (req, res, next) => {
+  const checkInOut: CheckInOutType = req.body;
 
   const now = new Date();
-  const startDate = new Date(bookingNote.start_date);
+  const startDate = new Date(checkInOut.start_date);
 
   if (now < startDate) {
     res.status(409).send("Can not check out! Start date must be before today!");
   } else {
     try {
-      const total_price = GetStayDays(startDate, now) * bookingNote.price;
+      const total_price = GetStayDays(startDate, now) * checkInOut.price;
       await UpdateMany(
         defautlTable,
-        ["end_date", "total_price", "check_out"],
+        ["end_date", "total_price", "is_check_out"],
         [now.toDateString(), total_price.toString(), "1"],
-        Object.keys(bookingNote),
-        Object.values(bookingNote)
+        Object.keys(checkInOut),
+        Object.values(checkInOut)
       );
       res.status(201).send("Check-out completed");
     } catch (error) {
@@ -61,4 +61,4 @@ bookingNoteRouter.post("/checkout", async (req, res, next) => {
   }
 });
 
-export default bookingNoteRouter;
+export default checkInOutRouter;

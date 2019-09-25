@@ -52,7 +52,7 @@ roomRouter.post("/checkin", async (req, res, next) => {
       ]);
       res.status(201).send("Room reserved!");
     } else {
-      res.status(409).send("Room is booked!");
+      res.status(409).send("Sorry, room is booked!");
     }
   } catch (error) {
     console.log(error);

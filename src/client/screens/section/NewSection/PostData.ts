@@ -1,5 +1,6 @@
 import Axios from "axios";
 import { SectionType, FloorType, RoomType } from "datatypes";
+import { ApiPath } from "../../../../global/ApiPath";
 
 export default async function PostData() {
   const alert = {
@@ -9,15 +10,15 @@ export default async function PostData() {
   try {
     const section = GetSectionFormData();
     if (section) {
-      const sectionRes = await Axios.post("/api/section/new", section);
+      const sectionRes = await Axios.post(`${ApiPath.section}/new`, section);
       console.log(`Post Data from New Section Success ${sectionRes.data}`);
 
       const floors = GetFloorsFormData(section);
-      const floorRes = await Axios.post("/api/floor/new", floors);
+      const floorRes = await Axios.post(`${ApiPath.floor}/new`, floors);
       console.log(`Post Data from New Section Success ${floorRes.data}`);
 
       const rooms = floors.map(floor => GetRoomsFormData(floor)).flat();
-      const roomRes = await Axios.post("/api/room/new", rooms);
+      const roomRes = await Axios.post(`${ApiPath.room}/new`, rooms);
       console.log(`Post Data from New Section Success ${roomRes.data}`);
 
       alert.msg = "New section created!";

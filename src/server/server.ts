@@ -19,32 +19,33 @@ app.get("/*", (req, res) => {
 });
 
 // Define routes
+import { ApiPath } from "../global/ApiPath";
 // Section route
 import sectionRouter from "./routes/SectionRouter";
-app.use("/api/section", sectionRouter);
+app.use(ApiPath.section, sectionRouter);
 
 //Floor route
 import floorRouter from "./routes/FloorRouter";
-app.use("/api/floor", floorRouter);
+app.use(ApiPath.floor, floorRouter);
 
 // Room route
 import roomRouter from "./routes/RoomRouter";
-app.use("/api/room", roomRouter);
+app.use(ApiPath.room, roomRouter);
 
 // Room Type route
 import roomTypeRouter from "./routes/RoomTypeRouter";
-app.use("/api/room-type", roomTypeRouter);
+app.use(ApiPath.roomType, roomTypeRouter);
 
-// Booking Note route
-import bookingNoteRouter from "./routes/BookingNoteRouter";
-app.use("/api/booking-note", bookingNoteRouter);
+// Check In/Out route
+import checkInOutRouter from "./routes/CheckInOutRouter";
+app.use(ApiPath.checkInOut, checkInOutRouter);
 
 // Manager route
 import managerRouter from "./routes/ManagerRouter";
-app.use("/api/manager", managerRouter);
+app.use(ApiPath.manager, managerRouter);
 
 // Authorize route
 import authorizeRouter from "./routes/AuthorizeRouter";
-app.use("/api/authorize", authorizeRouter);
+app.use(ApiPath.authorize, authorizeRouter);
 
 app.listen(3000, () => console.log("Server is listening on port 3000!"));

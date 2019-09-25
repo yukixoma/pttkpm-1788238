@@ -8,6 +8,7 @@ import {
 } from "datatypes";
 import { Container, Jumbotron } from "react-bootstrap";
 import FloorInfo from "./SectionInfo/FloorInfo";
+import { ApiPath } from "../../../global/ApiPath";
 import Axios from "axios";
 
 const SectionInfo: React.FC<SectionInfoProps> = ({ history, setActiveKey }) => {
@@ -25,10 +26,10 @@ const SectionInfo: React.FC<SectionInfoProps> = ({ history, setActiveKey }) => {
     localLoginInfo && localLoginInfo.section_id == section.id ? true : false;
 
   const fetchData = async () => {
-    const floors = await Axios.post("/api/floor/getInfo", {
+    const floors = await Axios.post(`${ApiPath.floor}/getInfo`, {
       section_id: section.id
     });
-    const roomTypes = await Axios.post("/api/room-type/getInfo");
+    const roomTypes = await Axios.post(`${ApiPath.roomType}/getInfo`);
     setRoomTypes(roomTypes.data);
     setFloors(floors.data);
   };

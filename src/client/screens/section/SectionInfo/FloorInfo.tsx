@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { FloorType, RoomType, RoomTypeType } from "datatypes";
-import axios from "axios";
 import { Jumbotron, Row } from "react-bootstrap";
 import RoomInfo from "./RoomInfo";
+import { ApiPath } from "../../../../global/ApiPath";
+import Axios from "axios";
 
 const FloorInfo: React.FC<FloorInfoProps> = props => {
   const [rooms, setRooms] = useState<RoomType[]>([]);
   const { section_id, id, roomTypes, isLogin } = props;
   useEffect(() => {
-    axios
-      .post("/api/room/getInfo", { section_id: section_id, floor_id: id })
-      .then(res => {
-        const data = res.data as RoomType[];
-        setRooms(data);
-      });
+    Axios.post(`${ApiPath.room}/getInfo`, {
+      section_id: section_id,
+      floor_id: id
+    }).then(res => {
+      const data = res.data as RoomType[];
+      setRooms(data);
+    });
   }, []);
   return (
     <Jumbotron style={{ textAlign: "left" }}>

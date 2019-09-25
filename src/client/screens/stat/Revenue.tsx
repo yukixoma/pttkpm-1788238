@@ -13,6 +13,7 @@ import {
 } from "react-bootstrap";
 import AlertBanner from "../components/AlertBanner";
 import Redirect from "../components/Redirect";
+import { ApiPath } from "../../../global/ApiPath";
 import Axios from "axios";
 
 const Revenue: React.FC<RevenueProps> = props => {
@@ -32,7 +33,9 @@ const YearRevenue: React.FC<RevenueProps> = props => {
   const [alert, setAlert] = useState({ msg: "", success: false });
   const fetchData = async (year: string) => {
     try {
-      const res = await Axios.post("/api/manager/yearRevenue", { year: year });
+      const res = await Axios.post(`${ApiPath.manager}/yearRevenue`, {
+        year: year
+      });
       const data = res.data as YearRevenueType;
       setYear(year);
       if (data) {

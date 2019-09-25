@@ -22,7 +22,7 @@ declare module "datatypes" {
     convinient: string;
     capacity: number;
   }
-  export interface BookingNoteType {
+  export interface CheckInOutType {
     section_id: string;
     floor_id: number;
     room_id: number;
@@ -34,7 +34,7 @@ declare module "datatypes" {
     end_date: string;
     customer_fullname: string;
     customer_id: string;
-    check_out: 0 | 1;
+    is_check_out: 0 | 1;
     [key: string]: any;
   }
   export interface YearRevenueType {

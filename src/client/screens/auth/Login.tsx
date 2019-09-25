@@ -8,11 +8,12 @@ import {
   Col,
   Card,
   FormGroup,
-  Button
+  Button,
+  Jumbotron
 } from "react-bootstrap";
 import AlertBanner from "../components/AlertBanner";
+import { ApiPath } from "../../../global/ApiPath";
 import Axios from "axios";
-import { Jumbotron } from "react-bootstrap";
 
 const Login: React.FC<LoginProps> = ({ history, setActiveKey }) => {
   setActiveKey("login");
@@ -29,7 +30,10 @@ const Login: React.FC<LoginProps> = ({ history, setActiveKey }) => {
     };
 
     try {
-      const authorize = await Axios.post("/api/authorize/login", postData);
+      const authorize = await Axios.post(
+        `${ApiPath.authorize}/login`,
+        postData
+      );
       const authorizedData: AuthorizeInfoType = authorize.data;
       const localLoginInfo: LocalAuthorizedInfoType = {
         id: authorizedData.id,

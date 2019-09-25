@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { RouteComponentProps as RCP, Link } from "react-router-dom";
 import { LocalAuthorizedInfoType, RoomType } from "datatypes";
 import { GetDiffDays as GetStayDays } from "../../../library/GetDiffDays";
-import { BookingNoteType } from "datatypes";
+import { CheckInOutType } from "datatypes";
 import { Container, Card, ListGroup, Row, Col, Button } from "react-bootstrap";
 import AlertBanner from "../components/AlertBanner";
 import Redirect from "../components/Redirect";
+import { ApiPath } from "../../../global/ApiPath";
 import Axios from "axios";
 
 const CheckOut: React.FC<RCP> = props => {
@@ -25,16 +26,16 @@ const CheckOut: React.FC<RCP> = props => {
 };
 
 const CheckOutView: React.FC<CheckOutView> = props => {
-  const [checkoutInfo, setCheckoutInfo] = useState<BookingNoteType>(null);
+  const [checkoutInfo, setCheckoutInfo] = useState<CheckInOutType>(null);
   const [alert, setAlert] = useState({ msg: "", success: false });
   const { section_id, floor_id, id } = props.roomInfo;
 
   useEffect(() => {
-    Axios.post("/api/booking-note/getInfo", {
+    Axios.post(`${ApiPath.checkInOut}/getInfo`, {
       section_id,
       floor_id,
       room_id: id,
-      check_out: 0
+      is_check_out: 0
     })
       .then(res => {
         if (res.data) setCheckoutInfo(res.data);
@@ -47,7 +48,7 @@ const CheckOutView: React.FC<CheckOutView> = props => {
   const onCheckOut = async () => {
     try {
       // Release room
-      const room = await Axios.post("/api/room/checkout", {
+      const room = await Axios.post(`${ApiPath.room}/checkout`, {
         section_id: section_id,
         floor_id: floor_id,
         id: id
@@ -55,14 +56,14 @@ const CheckOutView: React.FC<CheckOutView> = props => {
       setAlert({ msg: room.data, success: true });
 
       // Check out
-      const checkoutRes = await Axios.post("/api/booking-note/checkout", {
+      const checkoutRes = await Axios.post(`${ApiPath.checkInOut}/checkout`, {
         section_id: checkoutInfo.section_id,
         floor_id: checkoutInfo.floor_id,
         room_id: checkoutInfo.room_id,
         id: checkoutInfo.id,
         start_date: checkoutInfo.start_date,
         price: checkoutInfo.price,
-        check_out: 0
+        is_check_out: 0
       });
       setAlert({ msg: checkoutRes.data, success: true });
     } catch (error) {
